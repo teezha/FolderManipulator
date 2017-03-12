@@ -13,6 +13,7 @@
     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
   </columnConstraints>
   <rowConstraints>
       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -24,16 +25,20 @@
    <children>
       <TextArea fx:id="results" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
       <TextField fx:id="divider" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-      <TextField fx:id="selPath" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-      <TextField fx:id="drive" GridPane.columnIndex="1" />
+      <TextField fx:id="selPath" text="D:\UNSORTED TBW" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+      <TextField fx:id="drive" text="D" GridPane.columnIndex="1" />
       <TextField fx:id="tmpOut" GridPane.columnIndex="1" GridPane.rowIndex="4" />
       <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Drive" />
       <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Folder Path" GridPane.rowIndex="1" />
       <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Divider" GridPane.rowIndex="2" />
       <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Results" GridPane.rowIndex="3" />
       <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Temp" GridPane.rowIndex="4" />
-      <Button mnemonicParsing="false" onAction="#creatFolder" text="Make Dir" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+      <Button mnemonicParsing="false" onAction="#createFolder" text="Make Dir" GridPane.columnIndex="2" GridPane.rowIndex="1" />
       <Button mnemonicParsing="false" onAction="#deleteFolder" text="Remove Dir" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-      <Button mnemonicParsing="false" text="Initialize" GridPane.columnIndex="2" />
+      <Button mnemonicParsing="false" onAction="#onLoad" text="Initialize" GridPane.columnIndex="2" />
+      <TextField fx:id="warnings" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+      <TextField fx:id="fCounter" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="warnings:" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="File Count" GridPane.columnIndex="2" GridPane.rowIndex="3" />
    </children>
 </GridPane>
