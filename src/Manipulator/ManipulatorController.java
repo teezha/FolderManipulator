@@ -9,7 +9,6 @@ package Manipulator;
  * Limitations: Cannot overwrite files with the same name. To pack files, file names require dividing symbols to split
  * correctly.
  *
- * TODO: Make GUI better? Add overwrite function.
  */
 
 import javafx.application.Application;
