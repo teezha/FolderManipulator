@@ -74,8 +74,10 @@ public class ManipulatorController extends Application {
 
     //takes in the user input and returns it as a string
     private String userRegex() {
+        //adds the default required start and end for pattern to work in java
         String regExp = "(.*)"+regexID.getText()+"(.*)";
         if (!regexChecker()) {
+            //if failed stops the operation
             regExp = ".*";
         }
         warnings.setText(regExp);
@@ -95,53 +97,58 @@ public class ManipulatorController extends Application {
 
     //This function creates and moves files into folders
     public void createFolder() {
-        //Wipe out results from previous runs
-        results.setText("");
-        //create new File with the path and stores the symbol divider
-        File folder = new File(selPath.getText());
-        File[] listOfFiles = folder.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return name.matches(userRegex());
-            }
-        });
-        String div = divider.getText();
+        //Checks for errors first
+        if (regexChecker()) {
 
 
-        //for loop for each file in the list
-        for (int i = 0; i < listOfFiles.length; i++) {
-            if (listOfFiles[i].isFile()&&(!div.equals(""))) {
-
-                //splits file name with a divider token Only want the name before the token so we call for 0.
-                //This is the default way of my shows are sorted.
-                // also adds a divider token in the string in case there is no token in filename (unlikely due to regex now)
-                String fileName = listOfFiles[i].getName() + div;
-                String[] names = fileName.split(div);
-                //System.out.print(names[0]+"\n");
-                Path folderPath = Paths.get(folder +"\\"+ names[0].trim() + "\\");
-                results.appendText(folderPath + "\n");
-
-                File directory = new File(String.valueOf(folderPath));
-
-                //checks if directory exists. if does not exist, make new directory.
-                if (!directory.exists()) {
-                    //makes a directory if not exists
-                    directory.mkdir();
+            //Wipe out results from previous runs
+            results.setText("");
+            //create new File with the path and stores the symbol divider
+            File folder = new File(selPath.getText());
+            File[] listOfFiles = folder.listFiles(new FilenameFilter() {
+                @Override
+                public boolean accept(File dir, String name) {
+                    return name.matches(userRegex());
                 }
-                //sets initial file directory
-                File dirA = listOfFiles[i];
-                //renames the file path of the file in the if loop
-                //returns a user response if successful or not
-                if (dirA.renameTo(new File(String.valueOf(folderPath) + "\\" + dirA.getName()))) {
-                    results.appendText("Move successful\n");
+            });
+            String div = divider.getText();
+
+
+            //for loop for each file in the list
+            for (int i = 0; i < listOfFiles.length; i++) {
+                if (listOfFiles[i].isFile() && (!div.equals(""))) {
+
+                    //splits file name with a divider token Only want the name before the token so we call for 0.
+                    //This is the default way of my shows are sorted.
+                    // also adds a divider token in the string in case there is no token in filename (unlikely due to regex now)
+                    String fileName = listOfFiles[i].getName() + div;
+                    String[] names = fileName.split(div);
+                    //System.out.print(names[0]+"\n");
+                    Path folderPath = Paths.get(folder + "\\" + names[0].trim() + "\\");
+                    results.appendText(folderPath + "\n");
+
+                    File directory = new File(String.valueOf(folderPath));
+
+                    //checks if directory exists. if does not exist, make new directory.
+                    if (!directory.exists()) {
+                        //makes a directory if not exists
+                        directory.mkdir();
+                    }
+                    //sets initial file directory
+                    File dirA = listOfFiles[i];
+                    //renames the file path of the file in the if loop
+                    //returns a user response if successful or not
+                    if (dirA.renameTo(new File(String.valueOf(folderPath) + "\\" + dirA.getName()))) {
+                        results.appendText("Move successful\n");
+                    } else {
+                        results.appendText("Failed\n");
+                    }
                 } else {
-                    results.appendText("Failed\n");
+                    results.setText("Divider was empty.\nOperation cancelled!");
                 }
-            } else {
-                results.setText("Divider was empty.\nOperation cancelled!");
             }
-        }
 
+        }
     }
 
     public void dirUpOneFolder() {
