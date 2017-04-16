@@ -20,10 +20,12 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 public class ManipulatorController extends Application {
 
@@ -46,6 +48,8 @@ public class ManipulatorController extends Application {
     TextField tmpOut;
     @FXML
     TextField fCounter;
+    @FXML
+    TextField regexID;
 
     //load the folder method
     public void onLoad() {
@@ -68,27 +72,53 @@ public class ManipulatorController extends Application {
 
     }
 
+    //takes in the user input and returns it as a string
+    private String userRegex() {
+        String regExp = "(.*)"+regexID.getText()+"(.*)";
+        if (!regexChecker()) {
+            regExp = ".*";
+        }
+        warnings.setText(regExp);
+        return regExp;
+    }
+
+    private boolean regexChecker() {
+        String regExp = regexID.getText();
+        try {
+            Pattern.compile(regExp);
+        } catch (PatternSyntaxException e) {
+            System.err.println(e.getDescription());
+            return false;
+        }
+        return true;
+    }
+
     //This function creates and moves files into folders
     public void createFolder() {
         //Wipe out results from previous runs
         results.setText("");
         //create new File with the path and stores the symbol divider
         File folder = new File(selPath.getText());
-        File[] listOfFiles = folder.listFiles();
+        File[] listOfFiles = folder.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.matches(userRegex());
+            }
+        });
         String div = divider.getText();
 
 
         //for loop for each file in the list
         for (int i = 0; i < listOfFiles.length; i++) {
-            if (listOfFiles[i].isFile()) {
+            if (listOfFiles[i].isFile()&&(!div.equals(""))) {
 
-                //splits file name with - Only want the name before - so we call for 0.
-                //This is the deafult way of my shows are sorted.
-                // also adds a - in the string in case there is no - in file
+                //splits file name with a divider token Only want the name before the token so we call for 0.
+                //This is the default way of my shows are sorted.
+                // also adds a divider token in the string in case there is no token in filename (unlikely due to regex now)
                 String fileName = listOfFiles[i].getName() + div;
                 String[] names = fileName.split(div);
                 //System.out.print(names[0]+"\n");
-                Path folderPath = Paths.get(folder + names[0].trim() + "\\");
+                Path folderPath = Paths.get(folder +"\\"+ names[0].trim() + "\\");
                 results.appendText(folderPath + "\n");
 
                 File directory = new File(String.valueOf(folderPath));
@@ -103,16 +133,18 @@ public class ManipulatorController extends Application {
                 //renames the file path of the file in the if loop
                 //returns a user response if successful or not
                 if (dirA.renameTo(new File(String.valueOf(folderPath) + "\\" + dirA.getName()))) {
-                    System.out.print("Move success");
+                    results.appendText("Move successful\n");
                 } else {
-                    System.out.print("Failed");
+                    results.appendText("Failed\n");
                 }
+            } else {
+                results.setText("Divider was empty.\nOperation cancelled!");
             }
         }
 
     }
 
-    public void deleteFolder() {
+    public void dirUpOneFolder() {
         //wipes results output
         results.setText("");
 
@@ -124,10 +156,12 @@ public class ManipulatorController extends Application {
             //loops recursively through the directories to split the paths into an array
             for (int i = 0; i < fileNames.size(); i++) {
                 tmpOut.setText("");
+                //gets the filename from the list
                 String fileStr = String.valueOf(fileNames.get(i));
+                //appends the result to output and sets the file to point to the file listed in the list
                 results.appendText(fileStr + "\n");
                 File fileOrig = fileNames.get(i);
-                //splits the paths into varialbes as elements
+                //splits the paths into variables as elements through system
                 String pattern = Pattern.quote(System.getProperty("file.separator"));
                 String[] fileParts = fileStr.split(pattern);
                 //over write the paths, then moves all files up 1 directory
@@ -139,6 +173,7 @@ public class ManipulatorController extends Application {
                     tmpOut.appendText("\\");
                 }
                 //the actual movement of the files
+                //this actually uses the text field to hold the new file names as it moves through
                 tmpOut.appendText(fileParts[fileParts.length - 2]);
                 String newFile = tmpOut.getText();
                 fileNames.set(i, new File(newFile));
@@ -147,9 +182,9 @@ public class ManipulatorController extends Application {
         }
 
     //This method stores all the files paths recursively into the list
-    public void listAll(String dirName, ArrayList<File> files) {
+    private void listAll(String dirName, ArrayList<File> files) {
         results.setText("");
-        warnings.setText("Listing Files...");
+        warnings.setText("Listing Files...\n");
         //sets variables
         File folder = new File(dirName);
         File[] listOfFiles = folder.listFiles();
