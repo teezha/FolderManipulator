@@ -76,10 +76,6 @@ public class ManipulatorController extends Application {
     private String userRegex() {
         //adds the default required start and end for pattern to work in java
         String regExp = "(.*)"+regexID.getText()+"(.*)";
-        if (!regexChecker()) {
-            //if failed stops the operation
-            regExp = ".*";
-        }
         warnings.setText(regExp);
         return regExp;
     }
@@ -148,7 +144,7 @@ public class ManipulatorController extends Application {
                 }
             }
 
-        }
+        } else { results.setText("Invalid Regex Pattern");}
     }
 
     public void dirUpOneFolder() {
